@@ -63,10 +63,20 @@ namespace jekyll_gui.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon jekyll {
+        internal static System.Drawing.Icon jekyll_icon {
             get {
-                object obj = ResourceManager.GetObject("jekyll", resourceCulture);
+                object obj = ResourceManager.GetObject("jekyll_icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap jekyll_image {
+            get {
+                object obj = ResourceManager.GetObject("jekyll_image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

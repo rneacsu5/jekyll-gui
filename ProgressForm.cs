@@ -15,7 +15,7 @@ namespace jekyll_gui {
 
 		private void InstallBinariesForm_Load(object sender, EventArgs e) {
 			// Set Icon
-			Icon = Properties.Resources.jekyll;
+			Icon = Properties.Resources.jekyll_icon;
 
 			// Set Async task
 			bw.DoWork += (object s1, DoWorkEventArgs e1) => {
