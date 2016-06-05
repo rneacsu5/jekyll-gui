@@ -3,21 +3,25 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 
-namespace jekyll_gui {
-	public partial class ProgressForm : Form {
+namespace jekyll_gui
+{
+	public partial class ProgressForm : Form
+	{
 
 		private BackgroundWorker bw;
 		public Exception Error = null;
-		
 
-		public ProgressForm(BackgroundWorker bw, string text, bool displayProgressBar) {
+
+		public ProgressForm(BackgroundWorker bw, string text, bool displayProgressBar)
+		{
 			InitializeComponent();
 			this.bw = bw;
 			progressTextLb.Text = text;
 			taskProgressBar.Visible = displayProgressBar;
 		}
 
-		private void InstallBinariesForm_Load(object sender, EventArgs e) {
+		private void ProgressForm_Load(object sender, EventArgs e)
+		{
 			// Set Icon
 			Icon = Properties.Resources.jekyll_icon;
 
@@ -44,7 +48,8 @@ namespace jekyll_gui {
 			bw.RunWorkerAsync();
 		}
 
-		private void InstallBinariesForm_FormClosing(object sender, FormClosingEventArgs e) {
+		private void ProgressForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
 			if (bw.IsBusy) {
 				e.Cancel = true;
 				bw.CancelAsync();

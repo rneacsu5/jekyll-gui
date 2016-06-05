@@ -1,10 +1,13 @@
 ﻿using System.Diagnostics;
 using System.IO;
 
-namespace jekyll_gui {
-	public static class JekyllEnv {
+namespace jekyll_gui
+{
+	public static class JekyllEnv
+	{
 
-		private static Process CreateRubyProcess(string args, string workingDir) {
+		private static Process CreateRubyProcess(string args, string workingDir)
+		{
 			Process p = new Process();
 
 			p.StartInfo.UseShellExecute = false;
@@ -21,8 +24,9 @@ namespace jekyll_gui {
 			return p;
 		}
 
-		public static Process CreateJekyllProcess(string args, string workingDir) {
-			return CreateRubyProcess("\"" + Path.GetFullPath(CONSTANTS.JEKYLL_PATH) +"\" " + args, workingDir);
+		public static Process CreateJekyllProcess(string args, string workingDir)
+		{
+			return CreateRubyProcess("\"" + Path.GetFullPath(CONSTANTS.JEKYLL_PATH) + "\" " + args, workingDir);
 		}
 	}
 }

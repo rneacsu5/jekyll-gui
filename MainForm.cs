@@ -8,11 +8,14 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 
-namespace jekyll_gui {
+namespace jekyll_gui
+{
 
-	public partial class MainForm : Form {
+	public partial class MainForm : Form
+	{
 
-		public MainForm() {
+		public MainForm()
+		{
 			InitializeComponent();
 
 			newBW = new BackgroundWorker();
@@ -104,7 +107,8 @@ namespace jekyll_gui {
 		}
 
 
-		enum ServerState {
+		enum ServerState
+		{
 			RUNNING,
 			STOPPED
 		}
@@ -119,11 +123,13 @@ namespace jekyll_gui {
 		private bool closeFormPending = false;
 
 
-		private void setProjectPanel(bool enable) {
+		private void setProjectPanel(bool enable)
+		{
 			projectPanel.Visible = projectPanel.Enabled = projectMenu.Enabled = exportMenuItem.Enabled = enable;
 		}
 
-		private void setServerState(ServerState s) {
+		private void setServerState(ServerState s)
+		{
 			serverState = s;
 			switch (s) {
 				case ServerState.RUNNING:
@@ -146,7 +152,8 @@ namespace jekyll_gui {
 			}
 		}
 
-		private static string getLocalIPAddress() {
+		private static string getLocalIPAddress()
+		{
 			var host = Dns.GetHostEntry(Dns.GetHostName());
 			foreach (var ip in host.AddressList) {
 				if (ip.AddressFamily == AddressFamily.InterNetwork) {
@@ -158,8 +165,9 @@ namespace jekyll_gui {
 
 
 		/* Events handlers */
-		
-		private void MainForm_Load(object sender, EventArgs e) {
+
+		private void MainForm_Load(object sender, EventArgs e)
+		{
 			// Set Icon
 			Icon = Properties.Resources.jekyll_icon;
 
@@ -202,11 +210,12 @@ namespace jekyll_gui {
 
 			setServerState(ServerState.STOPPED);
 			setProjectPanel(false);
-			
+
 		}
 
 
-		private void newProjectMenuItem_Click(object sender, EventArgs e) {
+		private void newProjectMenuItem_Click(object sender, EventArgs e)
+		{
 			if (projectFolderDialog.ShowDialog() == DialogResult.OK) {
 				string path = projectFolderDialog.SelectedPath;
 				if (Directory.GetFileSystemEntries(path).Length != 0) {
@@ -220,7 +229,7 @@ namespace jekyll_gui {
 					}
 				}
 
-				
+
 				if (serverState == ServerState.RUNNING) {
 					toggleServerBtn.PerformClick();
 				}
@@ -240,7 +249,8 @@ namespace jekyll_gui {
 			}
 		}
 
-		private void openMenuItem_Click(object sender, EventArgs e) {
+		private void openMenuItem_Click(object sender, EventArgs e)
+		{
 			if (projectFolderDialog.ShowDialog() == DialogResult.OK) {
 				string path = projectFolderDialog.SelectedPath;
 
@@ -256,7 +266,8 @@ namespace jekyll_gui {
 			}
 		}
 
-		private void exportMenuItem_Click(object sender, EventArgs e) {
+		private void exportMenuItem_Click(object sender, EventArgs e)
+		{
 			string SourcePath = projectPath + @"\_site";
 			if (!Directory.Exists(SourcePath)) {
 				MessageBox.Show("Please build the website first.", "Jekyll GUI", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -287,20 +298,24 @@ namespace jekyll_gui {
 			}
 		}
 
-		private void moreThemesMenuItem_Click(object sender, EventArgs e) {
+		private void moreThemesMenuItem_Click(object sender, EventArgs e)
+		{
 			Process.Start(@"https://github.com/jekyll/jekyll/wiki/Themes");
 		}
 
-		private void exitMenuItem_Click(object sender, EventArgs e) {
+		private void exitMenuItem_Click(object sender, EventArgs e)
+		{
 			Close();
 		}
 
 
-		private void buildMenuItem_Click(object sender, EventArgs e) {
+		private void buildMenuItem_Click(object sender, EventArgs e)
+		{
 			if (!buildBW.IsBusy) buildBW.RunWorkerAsync();
 		}
 
-		private void cleanMenuItem_Click(object sender, EventArgs e) {
+		private void cleanMenuItem_Click(object sender, EventArgs e)
+		{
 			string[] paths = { @"\_site", @"\.sass-cache" };
 			foreach (string path in paths) {
 				if (Directory.Exists(projectPath + path)) {
@@ -311,7 +326,8 @@ namespace jekyll_gui {
 			consoleText.Clear();
 		}
 
-		private void closeMenuItem_Click(object sender, EventArgs e) {
+		private void closeMenuItem_Click(object sender, EventArgs e)
+		{
 			if (serverState == ServerState.RUNNING) {
 				toggleServerBtn.PerformClick();
 			}
@@ -319,39 +335,47 @@ namespace jekyll_gui {
 		}
 
 
-		private void jekyllMenuItem_Click(object sender, EventArgs e) {
+		private void jekyllMenuItem_Click(object sender, EventArgs e)
+		{
 			Process.Start(@"https://jekyllrb.com/docs/home/");
 		}
 
-		private void kramdownMenuItem_Click(object sender, EventArgs e) {
+		private void kramdownMenuItem_Click(object sender, EventArgs e)
+		{
 			Process.Start(@"http://kramdown.gettalong.org/syntax.html");
 		}
 
-		private void webdevMenuItem_Click(object sender, EventArgs e) {
+		private void webdevMenuItem_Click(object sender, EventArgs e)
+		{
 			Process.Start(@"http://www.w3schools.com/");
 		}
 
-		private void toporSeparator_Click(object sender, EventArgs e) {
+		private void toporSeparator_Click(object sender, EventArgs e)
+		{
 			MessageBox.Show("This product was possible thanks to the power of Nexus. For more info and awesomeness, a website will appear.", "Nexus Power", MessageBoxButtons.OK);
 			Process.Start(@"http://topor.io");
 		}
 
-		private void aboutMenuItem_Click(object sender, EventArgs e) {
+		private void aboutMenuItem_Click(object sender, EventArgs e)
+		{
 			Form f = new AboutForm();
 			f.ShowDialog();
 		}
 
 
 
-		private void projectPathLb_Click(object sender, EventArgs e) {
+		private void projectPathLb_Click(object sender, EventArgs e)
+		{
 			Process.Start(projectPathLb.Text);
 		}
 
-		private void hostLb_Click(object sender, EventArgs e) {
+		private void hostLb_Click(object sender, EventArgs e)
+		{
 			Process.Start(hostLb.Text);
 		}
 
-		private void toggleServerBtn_Click(object sender, EventArgs e) {
+		private void toggleServerBtn_Click(object sender, EventArgs e)
+		{
 			switch (serverState) {
 				case ServerState.RUNNING:
 					toggleServerBtn.Enabled = false;
@@ -369,7 +393,8 @@ namespace jekyll_gui {
 			}
 		}
 
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
 			if (serveBW.IsBusy && !closeFormPending) {
 				closeFormPending = true;
 				toggleServerBtn.PerformClick();
@@ -378,7 +403,8 @@ namespace jekyll_gui {
 		}
 	}
 
-	static class CONSTANTS {
+	static class CONSTANTS
+	{
 		public static string ROOT_FOLDER = "Data";
 		public static string ENV_FOLDER = ROOT_FOLDER + @"\ruby-jekyll-env";
 		public static string BIN_FOLDER = ENV_FOLDER + @"\bin";

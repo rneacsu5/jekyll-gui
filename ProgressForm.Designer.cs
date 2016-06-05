@@ -59,8 +59,8 @@
 			this.Name = "ProgressForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Jekyll GUI";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InstallBinariesForm_FormClosing);
-			this.Load += new System.EventHandler(this.InstallBinariesForm_Load);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProgressForm_FormClosing);
+			this.Load += new System.EventHandler(this.ProgressForm_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
