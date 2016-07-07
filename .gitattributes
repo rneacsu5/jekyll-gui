@@ -16,5 +16,5 @@
 *.eps binary
 
 # Binaries
-Data/ruby-jekyll-env.zip binary
-Lib/Ionic.Zip.dll binary
+Data/ruby-jekyll-env.7z binary
+Lib/SevenZipSharp.dll binary

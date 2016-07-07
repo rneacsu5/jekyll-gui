@@ -29,4 +29,16 @@ namespace jekyll_gui
 			return CreateRubyProcess("\"" + Path.GetFullPath(CONSTANTS.JEKYLL_PATH) + "\" " + args, workingDir);
 		}
 	}
+
+	static class CONSTANTS
+	{
+		public static string ROOT_FOLDER = @"Data";
+		public static string SEVEN_ZIP_LIB = ROOT_FOLDER + @"\7z.dll";
+		public static string ENV_FOLDER = ROOT_FOLDER + @"\ruby-jekyll-env";
+		public static string BIN_FOLDER = ENV_FOLDER + @"\bin";
+		public static string RUBY_PATH = BIN_FOLDER + @"\ruby.exe";
+		public static string JEKYLL_PATH = BIN_FOLDER + @"\jekyll";
+		public static string ARCHIVE_PATH = ROOT_FOLDER + @"\ruby-jekyll-env.7z";
+	}
+
 }
