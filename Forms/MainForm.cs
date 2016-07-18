@@ -13,100 +13,6 @@ namespace jekyll_gui
 
 	public partial class MainForm : Form
 	{
-
-		public MainForm()
-		{
-			InitializeComponent();
-
-			newBW = new BackgroundWorker();
-			newBW.DoWork += (s1, e1) => {
-				Process p = JekyllEnv.CreateJekyllProcess("new . --force", projectPath);
-				p.Start();
-				p.WaitForExit();
-			};
-
-			buildBW = new BackgroundWorker();
-			buildBW.DoWork += (s1, e1) => {
-				Process p = JekyllEnv.CreateJekyllProcess("build", projectPath);
-
-				buildBW.ReportProgress(1, "Building...");
-
-				p.OutputDataReceived += (object s2, DataReceivedEventArgs e2) => {
-					buildBW.ReportProgress(0, e2.Data);
-				};
-				p.ErrorDataReceived += (object s2, DataReceivedEventArgs e2) => {
-					buildBW.ReportProgress(0, e2.Data);
-				};
-
-				p.Start();
-				p.BeginOutputReadLine();
-				p.BeginErrorReadLine();
-
-				p.WaitForExit();
-
-				p.CancelOutputRead();
-				p.CancelErrorRead();
-			};
-			buildBW.ProgressChanged += (object s1, ProgressChangedEventArgs e1) => {
-				if (e1.ProgressPercentage == 1) consoleText.Clear();
-				if (e1.UserState != null) {
-					consoleText.AppendText((string) e1.UserState);
-					consoleText.AppendText(Environment.NewLine);
-				}
-			};
-			buildBW.RunWorkerCompleted += (object s1, RunWorkerCompletedEventArgs e1) => {
-				consoleText.AppendText("Build done.");
-			};
-
-			buildBW.WorkerReportsProgress = true;
-
-			serveBW = new BackgroundWorker();
-			serveBW.DoWork += (s1, e1) => {
-				Process p = JekyllEnv.CreateJekyllProcess("serve -H " + ipAddress + " -P " + portNumber, projectPathLb.Text);
-
-				serveBW.ReportProgress(1, "Starting server...");
-
-				p.OutputDataReceived += (object s2, DataReceivedEventArgs e2) => {
-					serveBW.ReportProgress(0, e2.Data);
-				};
-				p.ErrorDataReceived += (object s2, DataReceivedEventArgs e2) => {
-					serveBW.ReportProgress(0, e2.Data);
-				};
-
-				p.Start();
-				p.BeginOutputReadLine();
-				p.BeginErrorReadLine();
-
-				while (!serveBW.CancellationPending && !p.HasExited) {
-					Thread.Sleep(500);
-				}
-
-				p.CancelOutputRead();
-				p.CancelErrorRead();
-				if (!p.HasExited)
-					p.Kill();
-			};
-			serveBW.ProgressChanged += (object s1, ProgressChangedEventArgs e1) => {
-				if (e1.ProgressPercentage == 1) consoleText.Clear();
-				if (e1.UserState != null) {
-					consoleText.AppendText((string) e1.UserState);
-					consoleText.AppendText(Environment.NewLine);
-				}
-			};
-			serveBW.RunWorkerCompleted += (object s1, RunWorkerCompletedEventArgs e1) => {
-				if (closeFormPending) {
-					closeFormPending = false;
-					Close();
-				}
-				else
-					setServerState(ServerState.STOPPED);
-			};
-
-			serveBW.WorkerReportsProgress = true;
-			serveBW.WorkerSupportsCancellation = true;
-		}
-
-
 		enum ServerState
 		{
 			RUNNING,
@@ -116,40 +22,77 @@ namespace jekyll_gui
 		private ServerState serverState = ServerState.STOPPED;
 		private int portNumber = 4000;
 		private string projectPath = "";
-		private string ipAddress = "localhost";
-		private BackgroundWorker serveBW;
-		private BackgroundWorker newBW;
-		private BackgroundWorker buildBW;
-		private bool closeFormPending = false;
+		private ConsoleTask serveTask = new ConsoleTask();
+		private ConsoleTask newTask = new ConsoleTask();
+		private ConsoleTask buildTask = new ConsoleTask();
 
-
-		private void setProjectPanel(bool enable)
+		public MainForm()
 		{
-			projectPanel.Visible = projectPanel.Enabled = projectMenu.Enabled = exportMenuItem.Enabled = enable;
+			InitializeComponent();
+
+			ConsoleTask.SetForm(this);
+			ConsoleTask.SetConsole(consoleText);
+			updateJekyllEnv();
 		}
 
-		private void setServerState(ServerState s)
+
+		private void updateJekyllEnv()
 		{
-			serverState = s;
-			switch (s) {
-				case ServerState.RUNNING:
-					toggleServerBtn.Text = "Stop Server";
-					toggleServerBtn.ForeColor = System.Drawing.Color.DarkRed;
-					toggleServerBtn.Enabled = true;
-					serverStatusPanel.Enabled = serverStatusPanel.Visible = true;
-					cleanMenuItem.Enabled = buildMenuItem.Enabled = exportMenuItem.Enabled = false;
-					cleanMenuItem.ToolTipText = buildMenuItem.ToolTipText = exportMenuItem.ToolTipText = "Stop server first";
-					break;
-				case ServerState.STOPPED:
-					toggleServerBtn.Text = "Start Server";
-					toggleServerBtn.ForeColor = System.Drawing.Color.DarkGreen;
-					toggleServerBtn.Enabled = true;
-					serverStatusPanel.Enabled = serverStatusPanel.Visible = false;
-					cleanMenuItem.Enabled = buildMenuItem.Enabled = exportMenuItem.Enabled = true;
-					cleanMenuItem.ToolTipText = buildMenuItem.ToolTipText = exportMenuItem.ToolTipText = null;
-					if (!projectPanel.Visible) exportMenuItem.Enabled = false;
-					break;
-			}
+			JekyllEnv.IPAddres = getLocalIPAddress();
+			JekyllEnv.PortNumber = portNumber;
+			JekyllEnv.WorkingDir = projectPath;
+			JekyllEnv.SetJekyllConsoleTask(serveTask, JekyllEnv.JekyllCommand.SERVE_SITE);
+			JekyllEnv.SetJekyllConsoleTask(newTask, JekyllEnv.JekyllCommand.CREATE_SITE);
+			JekyllEnv.SetJekyllConsoleTask(buildTask, JekyllEnv.JekyllCommand.BUILD_SITE);
+		}
+
+		private void startServer()
+		{
+			if (newTask.IsRunning) return;
+			JekyllEnv.SetJekyllConsoleTask(serveTask, JekyllEnv.JekyllCommand.SERVE_SITE);
+			serveTask.RunTaskAsync();
+			serverState = ServerState.RUNNING;
+
+			toggleServerBtn.Text = "Stop Server";
+			toggleServerBtn.ForeColor = System.Drawing.Color.DarkRed;
+			toggleServerBtn.Enabled = true;
+			serverStatusPanel.Enabled = serverStatusPanel.Visible = true;
+			cleanMenuItem.Enabled = buildMenuItem.Enabled = exportMenuItem.Enabled = false;
+			cleanMenuItem.ToolTipText = buildMenuItem.ToolTipText = exportMenuItem.ToolTipText = "Stop server first";
+		}
+
+		private void stopServer()
+		{
+			toggleServerBtn.Enabled = false;
+			serveTask.StopTask();
+
+			toggleServerBtn.Text = "Start Server";
+			toggleServerBtn.ForeColor = System.Drawing.Color.DarkGreen;
+			toggleServerBtn.Enabled = true;
+			serverStatusPanel.Enabled = serverStatusPanel.Visible = false;
+			cleanMenuItem.Enabled = buildMenuItem.Enabled = exportMenuItem.Enabled = true;
+			cleanMenuItem.ToolTipText = buildMenuItem.ToolTipText = exportMenuItem.ToolTipText = null;
+			if (!projectPanel.Visible) exportMenuItem.Enabled = false;
+
+			serverState = ServerState.STOPPED;
+		}
+
+		private void openProject(string path)
+		{
+			closeProject();
+			projectNameLb.Text = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+			projectPathLb.Text = projectPath = path;
+			projectPanel.Visible = projectPanel.Enabled = projectMenu.Enabled = exportMenuItem.Enabled = true;
+			hostLb.Text = "http:\\\\" + getLocalIPAddress() + ":" + portNumber;
+			updateJekyllEnv();
+		}
+
+		private void closeProject()
+		{
+			stopServer();
+			projectPanel.Visible = projectPanel.Enabled = projectMenu.Enabled = exportMenuItem.Enabled = false;
+			consoleText.Text = "";
+			projectNameLb.Text = projectPathLb.Text = projectPath = "";
 		}
 
 		private static string getLocalIPAddress()
@@ -160,7 +103,7 @@ namespace jekyll_gui
 					return ip.ToString();
 				}
 			}
-			throw new Exception("Local IP Address Not Found!");
+			return "localhost";
 		}
 
 
@@ -208,9 +151,7 @@ namespace jekyll_gui
 				}
 			}
 
-			setServerState(ServerState.STOPPED);
-			setProjectPanel(false);
-
+			closeProject();
 		}
 
 
@@ -229,40 +170,16 @@ namespace jekyll_gui
 					}
 				}
 
-
-				if (serverState == ServerState.RUNNING) {
-					toggleServerBtn.PerformClick();
-				}
-
-				projectNameLb.Text = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
-				projectPathLb.Text = projectPath = path;
-
-				setServerState(ServerState.STOPPED);
-				consoleText.Text = "";
-
 				// Run "jekyll new" in that folder
-				ProgressForm form = new ProgressForm(newBW, "Creating new project...", false);
-				form.ShowDialog();
-
-				setProjectPanel(true);
-
+				openProject(path);
+				newTask.RunTaskSync();
 			}
 		}
 
 		private void openMenuItem_Click(object sender, EventArgs e)
 		{
 			if (projectFolderDialog.ShowDialog() == DialogResult.OK) {
-				string path = projectFolderDialog.SelectedPath;
-
-				if (serverState == ServerState.RUNNING) {
-					toggleServerBtn.PerformClick();
-				}
-
-				projectNameLb.Text = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
-				projectPathLb.Text = projectPath = path;
-				setServerState(ServerState.STOPPED);
-				consoleText.Text = "";
-				setProjectPanel(true);
+				openProject(projectFolderDialog.SelectedPath);
 			}
 		}
 
@@ -270,28 +187,44 @@ namespace jekyll_gui
 		{
 			string SourcePath = projectPath + @"\_site";
 			if (!Directory.Exists(SourcePath)) {
-				MessageBox.Show("Please build the website first.", "Jekyll GUI", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return;
+				buildTask.RunTaskSync();
 			}
 
 			FolderBrowserDialog browser = new FolderBrowserDialog();
 			browser.Description = "Select destination folder";
 			if (browser.ShowDialog() == DialogResult.OK) {
 				string DestinationPath = browser.SelectedPath;
+				if (Directory.GetFileSystemEntries(DestinationPath).Length != 0) {
+					DialogResult result = MessageBox.Show("Selected folder is not empty. Proceed anyways?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+					if (result == DialogResult.Cancel) {
+						return;
+					}
+					if (result == DialogResult.No) {
+						exportMenuItem_Click(sender, e);
+						return;
+					}
+				}
 
 				consoleText.Clear();
 				consoleText.AppendText("Copying files...");
 				consoleText.AppendText(Environment.NewLine);
 
-				// Code from http://stackoverflow.com/a/3822913/3680746
+				// Code inspired from http://stackoverflow.com/a/3822913/3680746
 
 				// Create all of the directories
-				foreach (string dirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories))
+				foreach (string dirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories)) {
 					Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
+					consoleText.AppendText("Creating " + dirPath.Replace(SourcePath, DestinationPath));
+					consoleText.AppendText(Environment.NewLine);
+				}
 
 				// Copy all the files & replaces any files with the same name
-				foreach (string newPath in Directory.GetFiles(SourcePath, "*.*", SearchOption.AllDirectories))
+				foreach (string newPath in Directory.GetFiles(SourcePath, "*.*", SearchOption.AllDirectories)) {
+					consoleText.AppendText("Copying " + newPath);
 					File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
+					consoleText.AppendText(Environment.NewLine);
+				}
+
 
 				consoleText.AppendText("Successfully exported site to " + DestinationPath);
 				consoleText.AppendText(Environment.NewLine);
@@ -311,7 +244,7 @@ namespace jekyll_gui
 
 		private void buildMenuItem_Click(object sender, EventArgs e)
 		{
-			if (!buildBW.IsBusy) buildBW.RunWorkerAsync();
+			if (!buildTask.IsRunning) buildTask.RunTaskSync();
 		}
 
 		private void cleanMenuItem_Click(object sender, EventArgs e)
@@ -328,10 +261,7 @@ namespace jekyll_gui
 
 		private void closeMenuItem_Click(object sender, EventArgs e)
 		{
-			if (serverState == ServerState.RUNNING) {
-				toggleServerBtn.PerformClick();
-			}
-			setProjectPanel(false);
+			closeProject();
 		}
 
 
@@ -378,29 +308,14 @@ namespace jekyll_gui
 		{
 			switch (serverState) {
 				case ServerState.RUNNING:
-					toggleServerBtn.Enabled = false;
-					serveBW.CancelAsync();
+					stopServer();
 					break;
 				case ServerState.STOPPED:
-					ipAddress = getLocalIPAddress();
-					portNumber = 4000;
-
-					hostLb.Text = "http:\\\\" + ipAddress + ":" + portNumber;
-					setServerState(ServerState.RUNNING);
-
-					serveBW.RunWorkerAsync();
+					startServer();
 					break;
 			}
 		}
 
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			if (serveBW.IsBusy && !closeFormPending) {
-				closeFormPending = true;
-				toggleServerBtn.PerformClick();
-			}
-			if (closeFormPending) e.Cancel = true;
-		}
 	}
 
 }

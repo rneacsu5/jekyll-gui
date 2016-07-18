@@ -6,27 +6,36 @@ namespace jekyll_gui
 	public static class JekyllEnv
 	{
 
-		private static Process CreateRubyProcess(string args, string workingDir)
+		public enum JekyllCommand
 		{
-			Process p = new Process();
-
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.CreateNoWindow = true;
-
-			p.StartInfo.FileName = Path.GetFullPath(CONSTANTS.RUBY_PATH);
-			p.StartInfo.Arguments = args;
-			p.StartInfo.WorkingDirectory = workingDir;
-
-			p.StartInfo.RedirectStandardOutput = true;
-			p.StartInfo.RedirectStandardInput = true;
-			p.StartInfo.RedirectStandardError = true;
-
-			return p;
+			CREATE_SITE,
+			BUILD_SITE,
+			SERVE_SITE
 		}
 
-		public static Process CreateJekyllProcess(string args, string workingDir)
+		public static string IPAddres = "localhost";
+		public static int PortNumber = 4000;
+		public static string WorkingDir = "";
+
+
+		private static string jekyllCommandPrefix = "\"" + Path.GetFullPath(CONSTANTS.JEKYLL_PATH) + "\" ";
+
+		public static void SetJekyllConsoleTask(ConsoleTask task, JekyllCommand cmd)
 		{
-			return CreateRubyProcess("\"" + Path.GetFullPath(CONSTANTS.JEKYLL_PATH) + "\" " + args, workingDir);
+			switch (cmd) {
+				case JekyllCommand.CREATE_SITE:
+					task.SetCommandLine(CONSTANTS.RUBY_PATH, jekyllCommandPrefix + "new . --force", WorkingDir);
+					task.CommandInfo = "Creating site...";
+					break;
+				case JekyllCommand.BUILD_SITE:
+					task.SetCommandLine(CONSTANTS.RUBY_PATH, jekyllCommandPrefix + "build", WorkingDir);
+					task.CommandInfo = "Building site...";
+					break;
+				case JekyllCommand.SERVE_SITE:
+					task.SetCommandLine(CONSTANTS.RUBY_PATH, jekyllCommandPrefix + "serve -H " + IPAddres + " -P " + PortNumber, WorkingDir);
+					task.CommandInfo = "Starting server...";
+					break;
+			}
 		}
 	}
 
