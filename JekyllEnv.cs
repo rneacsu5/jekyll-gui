@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.IO;
+using System.Windows.Forms;
+using SevenZip;
 
 namespace jekyll_gui
 {
@@ -13,12 +15,12 @@ namespace jekyll_gui
 			SERVE_SITE
 		}
 
+		private static string jekyllCommandPrefix = "\"" + Path.GetFullPath(CONSTANTS.JEKYLL_PATH) + "\" ";
+
 		public static string IPAddres = "localhost";
-		public static int PortNumber = 4000;
+		public static uint PortNumber = 4000;
 		public static string WorkingDir = "";
 
-
-		private static string jekyllCommandPrefix = "\"" + Path.GetFullPath(CONSTANTS.JEKYLL_PATH) + "\" ";
 
 		public static void SetJekyllConsoleTask(ConsoleTask task, JekyllCommand cmd)
 		{
@@ -37,17 +39,55 @@ namespace jekyll_gui
 					break;
 			}
 		}
+
+		public static bool InstallJekyllEnvironment()
+		{
+			// Check for existing environment
+			if (!File.Exists(CONSTANTS.RUBY_PATH) || !File.Exists(CONSTANTS.JEKYLL_PATH)) {
+				// Need to install the environment
+				if (!File.Exists(CONSTANTS.ARCHIVE_PATH)) {
+					MessageBox.Show("Could not locate \"" + CONSTANTS.ARCHIVE_PATH + "\". Please reinstall this app and try again.", "File missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return false;
+				}
+
+				// Create Async task
+				BackgroundWorker bw = new BackgroundWorker();
+				bw.DoWork += (object s1, DoWorkEventArgs e1) => {
+					SevenZipBase.SetLibraryPath(CONSTANTS.SEVEN_ZIP_LIB);
+					SevenZipExtractor sze = new SevenZipExtractor(CONSTANTS.ARCHIVE_PATH);
+					sze.Extracting += (object s2, ProgressEventArgs e2) => {
+						bw.ReportProgress(e2.PercentDone * 10);
+						if (bw.CancellationPending) {
+							e2.Cancel = true;
+							e1.Cancel = true;
+						}
+					};
+
+					sze.ExtractArchive(CONSTANTS.ENV_FOLDER);
+				};
+
+				Forms.ProgressForm form = new Forms.ProgressForm(bw, "Extracting files, please wait...", true);
+				DialogResult result = form.ShowDialog();
+
+				if (result == DialogResult.Abort) {
+					MessageBox.Show("An error occured when extracting \"" + CONSTANTS.ARCHIVE_PATH + "\"\n" + form.Error.ToString(), "Extract Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				if (result != DialogResult.OK) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	static class CONSTANTS
 	{
-		public static string ROOT_FOLDER = @"Data";
-		public static string SEVEN_ZIP_LIB = ROOT_FOLDER + @"\7z.dll";
-		public static string ENV_FOLDER = ROOT_FOLDER + @"\ruby-jekyll-env";
-		public static string BIN_FOLDER = ENV_FOLDER + @"\bin";
-		public static string RUBY_PATH = BIN_FOLDER + @"\ruby.exe";
-		public static string JEKYLL_PATH = BIN_FOLDER + @"\jekyll";
-		public static string ARCHIVE_PATH = ROOT_FOLDER + @"\ruby-jekyll-env.7z";
+		public const string ROOT_FOLDER = @"Data";
+		public const string SEVEN_ZIP_LIB = ROOT_FOLDER + @"\7z.dll";
+		public const string ENV_FOLDER = ROOT_FOLDER + @"\ruby-jekyll-env";
+		public const string BIN_FOLDER = ENV_FOLDER + @"\bin";
+		public const string RUBY_PATH = BIN_FOLDER + @"\ruby.exe";
+		public const string JEKYLL_PATH = BIN_FOLDER + @"\jekyll";
+		public const string ARCHIVE_PATH = ROOT_FOLDER + @"\ruby-jekyll-env.7z";
 	}
-
 }

@@ -1,5 +1,7 @@
-﻿namespace jekyll_gui {
-	partial class ProgressForm {
+﻿namespace jekyll_gui.Forms
+{
+	partial class ProgressForm
+	{
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -9,7 +11,8 @@
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing)
+		{
 			if (disposing && (components != null)) {
 				components.Dispose();
 			}
@@ -22,7 +25,8 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent() {
+		private void InitializeComponent()
+		{
 			this.progressTextLb = new System.Windows.Forms.Label();
 			this.taskProgressBar = new System.Windows.Forms.ProgressBar();
 			this.SuspendLayout();
@@ -38,8 +42,8 @@
 			// 
 			// taskProgressBar
 			// 
-			this.taskProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.taskProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.taskProgressBar.Location = new System.Drawing.Point(12, 38);
 			this.taskProgressBar.Maximum = 1000;
 			this.taskProgressBar.Name = "taskProgressBar";

@@ -20,7 +20,6 @@ namespace jekyll_gui
 		public string CommandInfo;
 		private BackgroundWorker bw = new BackgroundWorker();
 		private AutoResetEvent isDone = new AutoResetEvent(false);
-		private bool muteOutput = false;
 
 
 		public ConsoleTask() : this(null, null, null, null) { }
@@ -56,17 +55,22 @@ namespace jekyll_gui
 
 			isDone.Reset();
 
-			proc.Start();
-			proc.BeginOutputReadLine();
-			proc.BeginErrorReadLine();
+			try {
+				proc.Start();
+				proc.BeginOutputReadLine();
+				proc.BeginErrorReadLine();
 
-			while (!proc.HasExited && !bw.CancellationPending && !closePending) Thread.Sleep(100);
-			if (!proc.HasExited) proc.Kill();
+				while (!proc.HasExited && !bw.CancellationPending && !closePending) Thread.Sleep(100);
+				if (!proc.HasExited) proc.Kill();
+				if (bw.CancellationPending) e.Cancel = true;
 
-			proc.CancelOutputRead();
-			proc.CancelErrorRead();
-
-			bw.ReportProgress(0, "Task finished.");
+				proc.CancelOutputRead();
+				proc.CancelErrorRead();
+			}
+			catch (Exception exception) {
+				MessageBox.Show("Could not start process. Make sure the project exists and then retry.\nError message: " + exception.Message, "Jekyll GUI", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				e.Cancel = true;
+			}
 
 			isDone.Set();
 
@@ -86,15 +90,15 @@ namespace jekyll_gui
 			bw.ReportProgress(0, e.Data);
 		}
 
-		private void writeToConsole(string line) 
+		private void writeToConsole(string line)
 		{
-			if (!muteOutput && console != null && !console.IsDisposed && line != null) {
+			if (console != null && !console.IsDisposed && line != null) {
 				console.AppendText(line);
 				console.AppendText(Environment.NewLine);
 			}
 		}
 
-		private void clearConsole() 
+		private void clearConsole()
 		{
 			if (console != null && !console.IsDisposed) {
 				console.Clear();
@@ -111,7 +115,6 @@ namespace jekyll_gui
 		public void RunTaskAsync()
 		{
 			if (!bw.IsBusy) {
-				muteOutput = false;
 				clearConsole();
 				writeToConsole(CommandInfo);
 				bw.RunWorkerAsync();
@@ -142,8 +145,6 @@ namespace jekyll_gui
 			if (bw.IsBusy) {
 				bw.CancelAsync();
 				isDone.WaitOne();
-				writeToConsole("Task finished.");
-				muteOutput = true;
 			}
 		}
 
@@ -152,6 +153,10 @@ namespace jekyll_gui
 			get { return bw.IsBusy; }
 		}
 
+		public void AddTaskCompleteEventHandler(RunWorkerCompletedEventHandler h)
+		{
+			bw.RunWorkerCompleted += h;
+		}
 
 		public static void SetConsole(TextBox console)
 		{

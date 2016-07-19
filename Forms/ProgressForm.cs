@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 
-namespace jekyll_gui
+namespace jekyll_gui.Forms
 {
 	public partial class ProgressForm : Form
 	{

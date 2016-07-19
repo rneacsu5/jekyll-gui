@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace jekyll_gui
+namespace jekyll_gui.Forms
 {
 	public partial class AboutForm : Form
 	{
