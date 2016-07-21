@@ -68,7 +68,7 @@ namespace jekyll_gui
 				proc.CancelErrorRead();
 			}
 			catch (Exception exception) {
-				MessageBox.Show("Could not start process. Make sure the project exists and then retry.\nError message: " + exception.Message, "Jekyll GUI", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Tools.DisplayError("Could not start process. Make sure the project exists and then retry.", exception);
 				e.Cancel = true;
 			}
 

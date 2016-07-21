@@ -2,8 +2,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using System.Windows.Forms;
 
 namespace jekyll_gui.Forms
@@ -29,7 +27,7 @@ namespace jekyll_gui.Forms
 
 		private void updateJekyllTasks()
 		{
-			JekyllEnv.IPAddres = getLocalIPAddress();
+			JekyllEnv.IPAddres = Tools.GetLocalIPAddress();
 			JekyllEnv.PortNumber = (uint) portNumericBox.Value;
 			JekyllEnv.WorkingDir = projectPath;
 			JekyllEnv.SetJekyllConsoleTask(serveTask, JekyllEnv.JekyllCommand.SERVE_SITE);
@@ -41,7 +39,7 @@ namespace jekyll_gui.Forms
 		{
 			if (newTask.IsRunning) return;
 
-			hostLb.Text = "http:\\\\" + getLocalIPAddress() + ":" + portNumericBox.Value;
+			hostLb.Text = "http:\\\\" + Tools.GetLocalIPAddress() + ":" + portNumericBox.Value;
 
 			JekyllEnv.SetJekyllConsoleTask(serveTask, JekyllEnv.JekyllCommand.SERVE_SITE);
 			serveTask.RunTaskAsync();
@@ -78,37 +76,37 @@ namespace jekyll_gui.Forms
 				startServer();
 		}
 
-		private void newProject()
+		private bool browseFolder(out string path, bool empty)
 		{
-			if (projectBrowserDialog.ShowDialog() == DialogResult.OK) {
-				string path = projectBrowserDialog.SelectedPath;
-				if (Directory.GetFileSystemEntries(path).Length != 0) {
-					DialogResult result = MessageBox.Show("Selected folder is not empty. Proceed anyways?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-					if (result == DialogResult.Cancel) {
-						return;
+			path = null;
+			if (folderBrowserDialog.ShowDialog() == DialogResult.OK) {
+				path = folderBrowserDialog.SelectedPath;
+				try {
+					if (empty && Directory.GetFileSystemEntries(path).Length != 0) {
+						DialogResult result = MessageBox.Show("Selected folder is not empty. Proceed anyways?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+						if (result == DialogResult.Cancel) return false;
+						if (result == DialogResult.No) return browseFolder(out path, empty);
 					}
-					if (result == DialogResult.No) {
-						newProject();
-						return;
-					}
+					return true;
 				}
-
-				// Run "jekyll new" in that folder
-				openProject(path);
-				newTask.RunTaskSync();
+				catch (Exception ex) {
+					Tools.DisplayError("Could not browse folder.", ex);
+					return false;
+				}
 			}
+			return false;
 		}
 
-		private void openProject(string path)
+		private void createProject()
 		{
-			if (path == null) {
-				if (projectBrowserDialog.ShowDialog() == DialogResult.OK) {
-					path = projectBrowserDialog.SelectedPath;
-				}
-				else {
-					return;
-				}
-			}
+			openProject(true);
+			newTask.RunTaskSync();
+		}
+
+		private void openProject(bool empty)
+		{
+			string path;
+			if (!browseFolder(out path, empty)) return;
 			closeProject();
 			projectNameLb.Text = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
 			projectPathLb.Text = projectPath = path;
@@ -121,47 +119,22 @@ namespace jekyll_gui.Forms
 
 		private void exportProject()
 		{
-			string SourcePath = projectPath + @"\_site";
-			if (!Directory.Exists(SourcePath)) {
+			string buildDir = projectPath + @"\_site";
+			if (!Directory.Exists(buildDir)) {
 				buildTask.RunTaskSync();
 			}
 
-			if (exportBrowserDialog.ShowDialog() == DialogResult.OK) {
-				string DestinationPath = exportBrowserDialog.SelectedPath;
-				if (Directory.GetFileSystemEntries(DestinationPath).Length != 0) {
-					DialogResult result = MessageBox.Show("Selected folder is not empty. Proceed anyways?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-					if (result == DialogResult.Cancel) {
-						return;
-					}
-					if (result == DialogResult.No) {
-						exportProject();
-						return;
-					}
-				}
+			string outDir;
+			if (!browseFolder(out outDir, true)) return;
 
-				consoleTextBox.Clear();
-				consoleTextBox.AppendText("Copying files...");
-				consoleTextBox.AppendText(Environment.NewLine);
+			consoleTextBox.Clear();
+			consoleTextBox.AppendText("Copying files..." + Environment.NewLine);
 
-				// Code inspired from http://stackoverflow.com/a/3822913/3680746
-
-				// Create all of the directories
-				foreach (string dirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories)) {
-					Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
-					consoleTextBox.AppendText("Creating " + dirPath.Replace(SourcePath, DestinationPath));
-					consoleTextBox.AppendText(Environment.NewLine);
-				}
-
-				// Copy all the files & replaces any files with the same name
-				foreach (string newPath in Directory.GetFiles(SourcePath, "*.*", SearchOption.AllDirectories)) {
-					consoleTextBox.AppendText("Copying " + newPath);
-					File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
-					consoleTextBox.AppendText(Environment.NewLine);
-				}
-
-
-				consoleTextBox.AppendText("Successfully exported site to " + DestinationPath);
-				consoleTextBox.AppendText(Environment.NewLine);
+			if (Tools.DirectoryCopy(buildDir, outDir)) {
+				consoleTextBox.AppendText("Successfully exported site to " + outDir + Environment.NewLine);
+			}
+			else {
+				consoleTextBox.AppendText("Aborted." + Environment.NewLine);
 			}
 		}
 
@@ -169,9 +142,7 @@ namespace jekyll_gui.Forms
 		{
 			string[] paths = { @"\_site", @"\.sass-cache" };
 			foreach (string path in paths) {
-				if (Directory.Exists(projectPath + path)) {
-					Directory.Delete(projectPath + path, true);
-				}
+				if (!Tools.DirectoryDelete(projectPath + path)) return;
 			}
 
 			consoleTextBox.Clear();
@@ -188,17 +159,6 @@ namespace jekyll_gui.Forms
 			projectNameLb.Text = projectPathLb.Text = projectPath = "";
 		}
 
-		private static string getLocalIPAddress()
-		{
-			var host = Dns.GetHostEntry(Dns.GetHostName());
-			foreach (var ip in host.AddressList) {
-				if (ip.AddressFamily == AddressFamily.InterNetwork) {
-					return ip.ToString();
-				}
-			}
-			return "localhost";
-		}
-
 
 		#region Event Handlers
 		private void MainForm_Load(object sender, EventArgs e)
@@ -210,14 +170,27 @@ namespace jekyll_gui.Forms
 		}
 
 
-		private void newProjectMenuItem_Click(object sender, EventArgs e)
+		private void defaultProjectMenuItem_Click(object sender, EventArgs e)
 		{
-			newProject();
+			createProject();
 		}
+
+		private void emptyProjectMenuItem_Click(object sender, EventArgs e)
+		{
+			openProject(true);
+		}
+
+		private void fromTemplatMenuItem_Click(object sender, EventArgs e)
+		{
+			openProject(true);
+			TemplateDialog d = new TemplateDialog(projectPath);
+			if (d.ShowDialog() != DialogResult.OK) closeProject();
+		}
+
 
 		private void openMenuItem_Click(object sender, EventArgs e)
 		{
-			openProject(null);
+			openProject(false);
 		}
 
 		private void exportMenuItem_Click(object sender, EventArgs e)
@@ -230,10 +203,6 @@ namespace jekyll_gui.Forms
 			closeProject();
 		}
 
-		private void moreThemesMenuItem_Click(object sender, EventArgs e)
-		{
-			Process.Start(@"https://github.com/jekyll/jekyll/wiki/Themes");
-		}
 
 		private void exitMenuItem_Click(object sender, EventArgs e)
 		{
@@ -248,7 +217,7 @@ namespace jekyll_gui.Forms
 
 		private void buildMenuItem_Click(object sender, EventArgs e)
 		{
-			if (!buildTask.IsRunning) buildTask.RunTaskSync();
+			buildTask.RunTaskSync();
 		}
 
 		private void rebuildMenuItem_Click(object sender, EventArgs e)
@@ -319,7 +288,7 @@ namespace jekyll_gui.Forms
 				Process.Start(projectPath);
 			}
 			else {
-				MessageBox.Show("Path not found. Please make sure the project exists.", "Jekyll GUI", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Tools.DisplayError("Path not found. Please make sure the project exists.");
 			}
 		}
 
@@ -350,5 +319,6 @@ namespace jekyll_gui.Forms
 			stopServer();
 		}
 		#endregion
+
 	}
 }

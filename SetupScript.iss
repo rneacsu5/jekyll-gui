@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Jekyll GUI"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion GetFileVersion('bin\Release\jekyll-gui.exe')
 #define MyAppPublisher "Nexus"
 #define MyAppURL "http://nexus.topor.io"
 #define MyAppExeName "jekyll-gui.exe"
@@ -36,9 +36,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "bin\Release\jekyll-gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Data\*"; DestDir: "{app}\Data"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Lib\SevenZipSharp.dll"; DestDir: "{app}";
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "ruby-jekyll-env.7z"; DestDir: "{app}"; Flags: ignoreversion
+Source: "7z.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Lib\SevenZipSharp.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -48,5 +48,5 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{app}\Data"
+Type: filesandordirs; Name: "{app}\ruby-jekyll-env"
 Type: dirifempty; Name: "{app}"

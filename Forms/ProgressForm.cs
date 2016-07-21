@@ -40,6 +40,8 @@ namespace jekyll_gui.Forms
 			};
 
 			bw.ProgressChanged += (object s1, ProgressChangedEventArgs e1) => {
+				if (e1.ProgressPercentage == 0) return;
+				taskProgressBar.Style = ProgressBarStyle.Continuous;
 				taskProgressBar.Value = e1.ProgressPercentage;
 			};
 
