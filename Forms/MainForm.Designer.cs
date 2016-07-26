@@ -54,7 +54,7 @@
 			this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.projectPanel = new System.Windows.Forms.Panel();
 			this.toggleServerBtn = new System.Windows.Forms.Button();
-			this.consoleTextBox = new System.Windows.Forms.TextBox();
+			this.consoleTextBox = new System.Windows.Forms.RichTextBox();
 			this.consoleMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.copyConsoleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyAllConsoleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,16 +72,16 @@
 			this.projectPanel.SuspendLayout();
 			this.consoleMenuStrip.SuspendLayout();
 			this.portPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.portNumericBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize) (this.portNumericBox)).BeginInit();
 			this.serverStatusPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// mainMenuStrip
 			// 
 			this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileMenu,
-            this.projectMenu,
-            this.helpMenu});
+			this.fileMenu,
+			this.projectMenu,
+			this.helpMenu});
 			this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
 			this.mainMenuStrip.Name = "mainMenuStrip";
 			this.mainMenuStrip.Size = new System.Drawing.Size(459, 24);
@@ -90,13 +90,13 @@
 			// fileMenu
 			// 
 			this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newMenuItem,
-            this.openMenuItem,
-            this.exportMenuItem,
-            this.toolStripSeparator2,
-            this.closeMenuItem,
-            this.toolStripSeparator1,
-            this.exitMenuItem});
+			this.newMenuItem,
+			this.openMenuItem,
+			this.exportMenuItem,
+			this.toolStripSeparator2,
+			this.closeMenuItem,
+			this.toolStripSeparator1,
+			this.exitMenuItem});
 			this.fileMenu.Name = "fileMenu";
 			this.fileMenu.Size = new System.Drawing.Size(37, 20);
 			this.fileMenu.Text = "&File";
@@ -104,9 +104,9 @@
 			// newMenuItem
 			// 
 			this.newMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.defaultProjectMenuItem,
-            this.emptyProjectMenuItem,
-            this.fromTemplatMenuItem});
+			this.defaultProjectMenuItem,
+			this.emptyProjectMenuItem,
+			this.fromTemplatMenuItem});
 			this.newMenuItem.Name = "newMenuItem";
 			this.newMenuItem.Size = new System.Drawing.Size(189, 22);
 			this.newMenuItem.Text = "&New";
@@ -114,7 +114,7 @@
 			// defaultProjectMenuItem
 			// 
 			this.defaultProjectMenuItem.Name = "defaultProjectMenuItem";
-			this.defaultProjectMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+			this.defaultProjectMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
 			this.defaultProjectMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.defaultProjectMenuItem.Text = "Default &project";
 			this.defaultProjectMenuItem.Click += new System.EventHandler(this.defaultProjectMenuItem_Click);
@@ -129,8 +129,8 @@
 			// fromTemplatMenuItem
 			// 
 			this.fromTemplatMenuItem.Name = "fromTemplatMenuItem";
-			this.fromTemplatMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.N)));
+			this.fromTemplatMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) (((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
+			| System.Windows.Forms.Keys.N)));
 			this.fromTemplatMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.fromTemplatMenuItem.Text = "From &template";
 			this.fromTemplatMenuItem.Click += new System.EventHandler(this.fromTemplatMenuItem_Click);
@@ -138,7 +138,7 @@
 			// openMenuItem
 			// 
 			this.openMenuItem.Name = "openMenuItem";
-			this.openMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.openMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
 			this.openMenuItem.Size = new System.Drawing.Size(189, 22);
 			this.openMenuItem.Text = "&Open folder...";
 			this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
@@ -170,7 +170,7 @@
 			// exitMenuItem
 			// 
 			this.exitMenuItem.Name = "exitMenuItem";
-			this.exitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F4)));
+			this.exitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F4)));
 			this.exitMenuItem.Size = new System.Drawing.Size(189, 22);
 			this.exitMenuItem.Text = "E&xit";
 			this.exitMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
@@ -178,11 +178,11 @@
 			// projectMenu
 			// 
 			this.projectMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toggleServerMenuItem,
-            this.toolStripSeparator3,
-            this.buildMenuItem,
-            this.rebuildMenuItem,
-            this.cleanMenuItem});
+			this.toggleServerMenuItem,
+			this.toolStripSeparator3,
+			this.buildMenuItem,
+			this.rebuildMenuItem,
+			this.cleanMenuItem});
 			this.projectMenu.Enabled = false;
 			this.projectMenu.Name = "projectMenu";
 			this.projectMenu.Size = new System.Drawing.Size(56, 20);
@@ -226,11 +226,11 @@
 			// helpMenu
 			// 
 			this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.jekyllMenuItem,
-            this.kramdownMenuItem,
-            this.webdevMenuItem,
-            this.toporSeparator,
-            this.aboutMenuItem});
+			this.jekyllMenuItem,
+			this.kramdownMenuItem,
+			this.webdevMenuItem,
+			this.toporSeparator,
+			this.aboutMenuItem});
 			this.helpMenu.Name = "helpMenu";
 			this.helpMenu.Size = new System.Drawing.Size(44, 20);
 			this.helpMenu.Text = "&Help";
@@ -265,16 +265,16 @@
 			// aboutMenuItem
 			// 
 			this.aboutMenuItem.Name = "aboutMenuItem";
-			this.aboutMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
+			this.aboutMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
 			this.aboutMenuItem.Size = new System.Drawing.Size(158, 22);
 			this.aboutMenuItem.Text = "&About";
 			this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
 			// 
 			// projectPanel
 			// 
-			this.projectPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.projectPanel.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.projectPanel.Controls.Add(this.toggleServerBtn);
 			this.projectPanel.Controls.Add(this.consoleTextBox);
 			this.projectPanel.Controls.Add(this.projectPathLb);
@@ -288,7 +288,7 @@
 			// 
 			// toggleServerBtn
 			// 
-			this.toggleServerBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.toggleServerBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.toggleServerBtn.ForeColor = System.Drawing.Color.DarkGreen;
 			this.toggleServerBtn.Location = new System.Drawing.Point(10, 70);
 			this.toggleServerBtn.Name = "toggleServerBtn";
@@ -300,32 +300,30 @@
 			// 
 			// consoleTextBox
 			// 
-			this.consoleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.consoleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.consoleTextBox.BackColor = System.Drawing.Color.Black;
 			this.consoleTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.consoleTextBox.ContextMenuStrip = this.consoleMenuStrip;
-			this.consoleTextBox.Font = new System.Drawing.Font("Consolas", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.consoleTextBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.consoleTextBox.ForeColor = System.Drawing.Color.WhiteSmoke;
 			this.consoleTextBox.Location = new System.Drawing.Point(10, 124);
 			this.consoleTextBox.MaxLength = 100000;
-			this.consoleTextBox.Multiline = true;
 			this.consoleTextBox.Name = "consoleTextBox";
 			this.consoleTextBox.ReadOnly = true;
-			this.consoleTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.consoleTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.consoleTextBox.Size = new System.Drawing.Size(439, 178);
 			this.consoleTextBox.TabIndex = 0;
 			this.consoleTextBox.TabStop = false;
-			this.consoleTextBox.Text = "Microsoft Windows [Version 10.0.10586]\r\n(c) 2015 Microsoft Corporation. All right" +
-    "s reserved.\r\n\r\nC:\\Users\\Jekyll>";
+			this.consoleTextBox.Text = "Microsoft Windows [Version 10.0.10586]\n(c) 2015 Microsoft Corporation. All rights reserved.\n\nC:\\Users\\Jekyll>";
 			// 
 			// consoleMenuStrip
 			// 
 			this.consoleMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyConsoleMenuItem,
-            this.copyAllConsoleMenuItem,
-            this.clearConsoleMenuItem});
+			this.copyConsoleMenuItem,
+			this.copyAllConsoleMenuItem,
+			this.clearConsoleMenuItem});
 			this.consoleMenuStrip.Name = "consoleMenuStrip";
 			this.consoleMenuStrip.Size = new System.Drawing.Size(120, 70);
 			this.consoleMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.consoleMenuStrip_Opening);
@@ -353,11 +351,11 @@
 			// 
 			// projectPathLb
 			// 
-			this.projectPathLb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.projectPathLb.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.projectPathLb.AutoEllipsis = true;
 			this.projectPathLb.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.projectPathLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.projectPathLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.projectPathLb.Location = new System.Drawing.Point(10, 40);
 			this.projectPathLb.Name = "projectPathLb";
 			this.projectPathLb.Size = new System.Drawing.Size(431, 22);
@@ -368,7 +366,7 @@
 			// projectNameLb
 			// 
 			this.projectNameLb.AutoSize = true;
-			this.projectNameLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.projectNameLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.projectNameLb.Location = new System.Drawing.Point(10, 15);
 			this.projectNameLb.Name = "projectNameLb";
 			this.projectNameLb.Size = new System.Drawing.Size(104, 20);
@@ -377,8 +375,8 @@
 			// 
 			// portPanel
 			// 
-			this.portPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.portPanel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.portPanel.Controls.Add(this.portNumericBox);
 			this.portPanel.Controls.Add(this.label3);
 			this.portPanel.Location = new System.Drawing.Point(168, 70);
@@ -388,35 +386,35 @@
 			// 
 			// portNumericBox
 			// 
-			this.portNumericBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.portNumericBox.Location = new System.Drawing.Point(44, 15);
+			this.portNumericBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+			this.portNumericBox.Location = new System.Drawing.Point(47, 15);
 			this.portNumericBox.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
+			65535,
+			0,
+			0,
+			0});
 			this.portNumericBox.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+			1,
+			0,
+			0,
+			0});
 			this.portNumericBox.Name = "portNumericBox";
 			this.portNumericBox.Size = new System.Drawing.Size(78, 23);
 			this.portNumericBox.TabIndex = 2;
 			this.portNumericBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.portNumericBox.Value = new decimal(new int[] {
-            4000,
-            0,
-            0,
-            0});
+			4000,
+			0,
+			0,
+			0});
 			this.portNumericBox.ValueChanged += new System.EventHandler(this.portNumericBox_ValueChanged);
 			this.portNumericBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.portNumericBox_KeyUp);
 			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label3.Location = new System.Drawing.Point(0, 17);
+			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+			this.label3.Location = new System.Drawing.Point(3, 17);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(38, 17);
 			this.label3.TabIndex = 0;
@@ -424,8 +422,8 @@
 			// 
 			// serverStatusPanel
 			// 
-			this.serverStatusPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.serverStatusPanel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.serverStatusPanel.Controls.Add(this.hostLb);
 			this.serverStatusPanel.Controls.Add(this.label1);
 			this.serverStatusPanel.Location = new System.Drawing.Point(168, 70);
@@ -435,11 +433,11 @@
 			// 
 			// hostLb
 			// 
-			this.hostLb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.hostLb.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.hostLb.AutoEllipsis = true;
 			this.hostLb.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.hostLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.hostLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.hostLb.ForeColor = System.Drawing.Color.RoyalBlue;
 			this.hostLb.Location = new System.Drawing.Point(76, 17);
 			this.hostLb.Name = "hostLb";
@@ -451,7 +449,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.label1.Location = new System.Drawing.Point(0, 17);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(76, 17);
@@ -474,6 +472,7 @@
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Jekyll GUI";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.mainMenuStrip.ResumeLayout(false);
 			this.mainMenuStrip.PerformLayout();
@@ -482,7 +481,7 @@
 			this.consoleMenuStrip.ResumeLayout(false);
 			this.portPanel.ResumeLayout(false);
 			this.portPanel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.portNumericBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize) (this.portNumericBox)).EndInit();
 			this.serverStatusPanel.ResumeLayout(false);
 			this.serverStatusPanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -508,7 +507,7 @@
 		private System.Windows.Forms.Panel projectPanel;
 		private System.Windows.Forms.Label projectNameLb;
 		private System.Windows.Forms.Label projectPathLb;
-		private System.Windows.Forms.TextBox consoleTextBox;
+		private System.Windows.Forms.RichTextBox consoleTextBox;
 		private System.Windows.Forms.Label hostLb;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button toggleServerBtn;

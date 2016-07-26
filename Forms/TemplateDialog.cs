@@ -123,14 +123,15 @@ namespace jekyll_gui.Forms
 			templatePanel.Enabled = templatePanel.Visible = true;
 		}
 
-		private bool applyTemplate() {
+		private bool applyTemplate()
+		{
 			if (selectedTemplate == null || string.IsNullOrEmpty(selectedTemplate.SourceURL)) return false;
 
 			string tempDir = outputDir + @"\.tmp";
 			string zip = tempDir + @"\source.zip";
 
 			if (!Tools.DirectoryDelete(tempDir)) return false;
-			
+
 			try {
 				Directory.CreateDirectory(tempDir).Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 			}
@@ -192,6 +193,7 @@ namespace jekyll_gui.Forms
 			Icon = Properties.Resources.jekyll_icon;
 			displayTemplate(-1);
 			refreshTemplatesList();
+			Size = Properties.Settings.Default.TemplateDialogSize;
 		}
 
 		private void refreshTemplatesBtn_Click(object sender, EventArgs e)
@@ -225,6 +227,12 @@ namespace jekyll_gui.Forms
 				Process.Start(selectedTemplate.SourceURL);
 			}
 			catch (Exception) { }
+		}
+
+		private void TemplateDialog_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			Properties.Settings.Default.TemplateDialogSize = Size;
+			Properties.Settings.Default.Save();
 		}
 	}
 }

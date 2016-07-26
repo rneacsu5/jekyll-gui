@@ -42,8 +42,8 @@
 			// 
 			// taskProgressBar
 			// 
-			this.taskProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.taskProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.taskProgressBar.Location = new System.Drawing.Point(12, 38);
 			this.taskProgressBar.Name = "taskProgressBar";
 			this.taskProgressBar.Size = new System.Drawing.Size(301, 23);

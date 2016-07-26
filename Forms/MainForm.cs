@@ -103,10 +103,11 @@ namespace jekyll_gui.Forms
 			newTask.RunTaskSync();
 		}
 
-		private void openProject(bool empty)
+		private bool openProject(bool empty) { return openProject(null, empty); }
+
+		private bool openProject(string path, bool empty)
 		{
-			string path;
-			if (!browseFolder(out path, empty)) return;
+			if (string.IsNullOrEmpty(path) && !browseFolder(out path, empty)) return false;
 			closeProject();
 			projectNameLb.Text = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
 			projectPathLb.Text = projectPath = path;
@@ -115,6 +116,7 @@ namespace jekyll_gui.Forms
 				if (m is ToolStripMenuItem) m.Enabled = true;
 			}
 			updateJekyllTasks();
+			return true;
 		}
 
 		private void exportProject()
@@ -167,6 +169,10 @@ namespace jekyll_gui.Forms
 			Icon = Properties.Resources.jekyll_icon;
 			if (!JekyllEnv.InstallJekyllEnvironment()) Close();
 			closeProject();
+
+			Size = Properties.Settings.Default.MainFormSize;
+			string path = Properties.Settings.Default.LastOpenPath;
+			if (!string.IsNullOrEmpty(path) && Directory.Exists(path)) openProject(path, false);
 		}
 
 
@@ -182,7 +188,7 @@ namespace jekyll_gui.Forms
 
 		private void fromTemplatMenuItem_Click(object sender, EventArgs e)
 		{
-			openProject(true);
+			if (!openProject(true)) return;
 			TemplateDialog d = new TemplateDialog(projectPath);
 			if (d.ShowDialog() != DialogResult.OK) closeProject();
 		}
@@ -318,7 +324,13 @@ namespace jekyll_gui.Forms
 		{
 			stopServer();
 		}
-		#endregion
 
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			Properties.Settings.Default.MainFormSize = Size;
+			Properties.Settings.Default.LastOpenPath = projectPath;
+			Properties.Settings.Default.Save();
+		}
+		#endregion
 	}
 }

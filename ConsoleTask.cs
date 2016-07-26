@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Threading;
 using System;
+using System.Drawing;
 
 namespace jekyll_gui
 {
@@ -10,14 +11,14 @@ namespace jekyll_gui
 	public class ConsoleTask
 	{
 		private static Form form = null;
-		private static TextBox console = null;
+		private static RichTextBox console = null;
 		private static bool closePending = false;
 		private static AutoResetEvent allClosed = new AutoResetEvent(false);
 		private static int runningTasks = 0;
 		private static Mutex mux = new Mutex();
 
-		private Process proc = new Process();
 		public string CommandInfo;
+		private Process proc = new Process();
 		private BackgroundWorker bw = new BackgroundWorker();
 		private AutoResetEvent isDone = new AutoResetEvent(false);
 
@@ -90,20 +91,6 @@ namespace jekyll_gui
 			bw.ReportProgress(0, e.Data);
 		}
 
-		private void writeToConsole(string line)
-		{
-			if (console != null && !console.IsDisposed && line != null) {
-				console.AppendText(line);
-				console.AppendText(Environment.NewLine);
-			}
-		}
-
-		private void clearConsole()
-		{
-			if (console != null && !console.IsDisposed) {
-				console.Clear();
-			}
-		}
 
 		public void SetCommandLine(string command, string args, string workingDir)
 		{
@@ -137,6 +124,7 @@ namespace jekyll_gui
 				}
 
 				isDone.WaitOne();
+				setConsoleColor();
 			}
 		}
 
@@ -145,6 +133,7 @@ namespace jekyll_gui
 			if (bw.IsBusy) {
 				bw.CancelAsync();
 				isDone.WaitOne();
+				setConsoleColor();
 			}
 		}
 
@@ -158,11 +147,13 @@ namespace jekyll_gui
 			bw.RunWorkerCompleted += h;
 		}
 
-		public static void SetConsole(TextBox console)
+
+		public static void SetConsole(RichTextBox console)
 		{
 			if (console != null) {
 				ConsoleTask.console = console;
 				ConsoleTask.console.Clear();
+				setConsoleColor();
 			}
 		}
 
@@ -174,6 +165,55 @@ namespace jekyll_gui
 			}
 		}
 
+
+		private static void setConsoleColor() { setConsoleColor(Color.Empty); }
+
+		private static void setConsoleColor(Color c)
+		{
+			if (console != null && !console.IsDisposed) {
+				console.SelectionStart = console.TextLength;
+				console.SelectionLength = 0;
+				console.SelectionColor = (c == Color.Empty) ? console.ForeColor : c;
+			}
+		}
+
+		private static void writeToConsole(string line)
+		{
+			if (console != null && !console.IsDisposed && line != null) {
+				int a;
+				while ((a = line.IndexOf("\x1b[")) >= 0) {
+					console.AppendText(line.Substring(0, a));
+					line = line.Remove(0, a + 2);
+					if (line.Length < 2) return;
+					if (line[0] == '0' && line[1] == 'm') {
+						setConsoleColor();
+						line = line.Remove(0, 2);
+					}
+					else {
+						if (line.Length < 3) return;
+						if (line.Substring(0, 3) == "31m") {
+							setConsoleColor(Color.Red);
+							line = line.Remove(0, 3);
+						}
+						else if (line.Substring(0, 3) == "33m") {
+							setConsoleColor(Color.Yellow);
+							line = line.Remove(0, 3);
+						}
+						else if (line[2] == 'm') line = line.Remove(0, 3);
+					}
+				}
+				console.AppendText(line);
+				console.AppendText(Environment.NewLine);
+			}
+		}
+
+		private static void clearConsole()
+		{
+			if (console != null && !console.IsDisposed) {
+				console.Clear();
+				setConsoleColor(console.ForeColor);
+			}
+		}
 
 		private static void form_FormClosing(object sender, FormClosingEventArgs e)
 		{

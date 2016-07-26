@@ -37,7 +37,7 @@
 			this.viewSourceBtn = new System.Windows.Forms.Button();
 			this.viewInBrowserBtn = new System.Windows.Forms.Button();
 			this.submitBtn = new System.Windows.Forms.Button();
-			((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
+			((System.ComponentModel.ISupportInitialize) (this.mainSplitContainer)).BeginInit();
 			this.mainSplitContainer.Panel1.SuspendLayout();
 			this.mainSplitContainer.Panel2.SuspendLayout();
 			this.mainSplitContainer.SuspendLayout();
@@ -68,8 +68,8 @@
 			// 
 			// refreshTemplatesBtn
 			// 
-			this.refreshTemplatesBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.refreshTemplatesBtn.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.refreshTemplatesBtn.Location = new System.Drawing.Point(0, 533);
 			this.refreshTemplatesBtn.Name = "refreshTemplatesBtn";
 			this.refreshTemplatesBtn.Size = new System.Drawing.Size(222, 28);
@@ -80,10 +80,10 @@
 			// 
 			// label1
 			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.label1.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.label1.Location = new System.Drawing.Point(0, 0);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(222, 40);
@@ -93,11 +93,11 @@
 			// 
 			// templatesListBox
 			// 
-			this.templatesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.templatesListBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.templatesListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.templatesListBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.templatesListBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.templatesListBox.FormattingEnabled = true;
 			this.templatesListBox.IntegralHeight = false;
 			this.templatesListBox.ItemHeight = 16;
@@ -123,11 +123,11 @@
 			// 
 			// templateNameLb
 			// 
-			this.templateNameLb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.templateNameLb.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.templateNameLb.AutoEllipsis = true;
 			this.templateNameLb.BackColor = System.Drawing.SystemColors.Control;
-			this.templateNameLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.templateNameLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.templateNameLb.Location = new System.Drawing.Point(0, 0);
 			this.templateNameLb.Name = "templateNameLb";
 			this.templateNameLb.Size = new System.Drawing.Size(462, 40);
@@ -137,9 +137,9 @@
 			// 
 			// demoBrowser
 			// 
-			this.demoBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.demoBrowser.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.demoBrowser.Location = new System.Drawing.Point(0, 40);
 			this.demoBrowser.MinimumSize = new System.Drawing.Size(20, 20);
 			this.demoBrowser.Name = "demoBrowser";
@@ -149,7 +149,7 @@
 			// 
 			// viewSourceBtn
 			// 
-			this.viewSourceBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.viewSourceBtn.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.viewSourceBtn.Location = new System.Drawing.Point(468, 4);
 			this.viewSourceBtn.Name = "viewSourceBtn";
 			this.viewSourceBtn.Size = new System.Drawing.Size(80, 30);
@@ -160,7 +160,7 @@
 			// 
 			// viewInBrowserBtn
 			// 
-			this.viewInBrowserBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.viewInBrowserBtn.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.viewInBrowserBtn.Location = new System.Drawing.Point(554, 4);
 			this.viewInBrowserBtn.Name = "viewInBrowserBtn";
 			this.viewInBrowserBtn.Size = new System.Drawing.Size(95, 30);
@@ -171,8 +171,8 @@
 			// 
 			// submitBtn
 			// 
-			this.submitBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.submitBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.submitBtn.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.submitBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.submitBtn.Location = new System.Drawing.Point(655, 4);
 			this.submitBtn.Name = "submitBtn";
 			this.submitBtn.Size = new System.Drawing.Size(100, 30);
@@ -192,10 +192,11 @@
 			this.Name = "TemplateDialog";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Templates";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TemplateDialog_FormClosing);
 			this.Load += new System.EventHandler(this.TemplateDialog_Load);
 			this.mainSplitContainer.Panel1.ResumeLayout(false);
 			this.mainSplitContainer.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
+			((System.ComponentModel.ISupportInitialize) (this.mainSplitContainer)).EndInit();
 			this.mainSplitContainer.ResumeLayout(false);
 			this.templatePanel.ResumeLayout(false);
 			this.ResumeLayout(false);
