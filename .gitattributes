@@ -15,6 +15,9 @@
 *.svg binary
 *.eps binary
 
+# Documentation
+*.docx binary
+
 # Binaries
 ruby-jekyll-env.7z binary
 Lib/SevenZipSharp.dll binary

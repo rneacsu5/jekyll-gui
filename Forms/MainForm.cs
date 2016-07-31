@@ -25,6 +25,9 @@ namespace jekyll_gui.Forms
 		}
 
 
+		/// <summary>
+		/// Updates all the ConsoleTasks with new IP and port
+		/// </summary>
 		private void updateJekyllTasks()
 		{
 			JekyllEnv.IPAddres = Tools.GetLocalIPAddress();
@@ -39,11 +42,11 @@ namespace jekyll_gui.Forms
 		{
 			if (newTask.IsRunning) return;
 
-			hostLb.Text = "http:\\\\" + Tools.GetLocalIPAddress() + ":" + portNumericBox.Value;
-
 			JekyllEnv.SetJekyllConsoleTask(serveTask, JekyllEnv.JekyllCommand.SERVE_SITE);
 			serveTask.RunTaskAsync();
 
+			// Update UI
+			hostLb.Text = "http:\\\\" + Tools.GetLocalIPAddress() + ":" + portNumericBox.Value;
 			toggleServerBtn.Text = "Stop Server";
 			toggleServerBtn.ForeColor = System.Drawing.Color.DarkRed;
 			toggleServerBtn.Enabled = true;
@@ -58,6 +61,7 @@ namespace jekyll_gui.Forms
 			toggleServerBtn.Enabled = false;
 			serveTask.StopTask();
 
+			// Update UI
 			toggleServerBtn.Text = "Start Server";
 			toggleServerBtn.ForeColor = System.Drawing.Color.DarkGreen;
 			toggleServerBtn.Enabled = true;
@@ -76,6 +80,12 @@ namespace jekyll_gui.Forms
 				startServer();
 		}
 
+		/// <summary>
+		/// Shows the user a browse dialog
+		/// </summary>
+		/// <param name="path">The selected path, if successful</param>
+		/// <param name="empty">If true, warn the user if the selected folder is non empty</param>
+		/// <returns>True if successfull, false if not</returns>
 		private bool browseFolder(out string path, bool empty)
 		{
 			path = null;
@@ -97,18 +107,34 @@ namespace jekyll_gui.Forms
 			return false;
 		}
 
-		private void createProject()
+		/// <summary>
+		/// Create a new demo project (runs jekyll new)
+		/// </summary>
+		private void createNewProject()
 		{
 			openProject(true);
 			newTask.RunTaskSync();
 		}
 
+		/// <summary>
+		/// Opens a project and updates view, calling browseFolder() first
+		/// </summary>
+		/// <param name="empty">This gets passed to browseFolder()</param>
+		/// <returns>True if successfull, false if not</returns>
 		private bool openProject(bool empty) { return openProject(null, empty); }
 
+		/// <summary>
+		/// Opens a project and updates views
+		/// </summary>
+		/// <param name="path">Path to project location or null to call browseFolder() first</param>
+		/// <param name="empty">This gets passed to browseFolder() if path was null</param>
+		/// <returns>True if successfull, false if not</returns>
 		private bool openProject(string path, bool empty)
 		{
 			if (string.IsNullOrEmpty(path) && !browseFolder(out path, empty)) return false;
 			closeProject();
+
+			// Update UI
 			projectNameLb.Text = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
 			projectPathLb.Text = projectPath = path;
 			projectPanel.Visible = projectPanel.Enabled = projectMenu.Enabled = exportMenuItem.Enabled = true;
@@ -119,14 +145,20 @@ namespace jekyll_gui.Forms
 			return true;
 		}
 
+		/// <summary>
+		/// Exports the site, building it if needed. browseFolder() is called to get export folder
+		/// </summary>
 		private void exportProject()
 		{
 			string buildDir = projectPath + @"\_site";
+			string outDir;
+
+			// Build site if needed
 			if (!Directory.Exists(buildDir)) {
 				buildTask.RunTaskSync();
 			}
 
-			string outDir;
+			// Browse for export dir
 			if (!browseFolder(out outDir, true)) return;
 
 			consoleTextBox.Clear();
@@ -140,6 +172,9 @@ namespace jekyll_gui.Forms
 			}
 		}
 
+		/// <summary>
+		/// Cleans generated filse (deletes _site and .sass-cache folders)
+		/// </summary>
 		private void cleanProject()
 		{
 			string[] paths = { @"\_site", @"\.sass-cache" };
@@ -153,6 +188,8 @@ namespace jekyll_gui.Forms
 		private void closeProject()
 		{
 			stopServer();
+
+			// Update UI
 			projectPanel.Visible = projectPanel.Enabled = projectMenu.Enabled = exportMenuItem.Enabled = false;
 			foreach (ToolStripItem m in projectMenu.DropDownItems) {
 				if (m is ToolStripMenuItem) m.Enabled = false;
@@ -167,9 +204,13 @@ namespace jekyll_gui.Forms
 		{
 			// Set Icon
 			Icon = Properties.Resources.jekyll_icon;
+			
+			// Check for environment
 			if (!JekyllEnv.InstallJekyllEnvironment()) Close();
+
 			closeProject();
 
+			// Restore state
 			Size = Properties.Settings.Default.MainFormSize;
 			string path = Properties.Settings.Default.LastOpenPath;
 			if (!string.IsNullOrEmpty(path) && Directory.Exists(path)) openProject(path, false);
@@ -178,7 +219,7 @@ namespace jekyll_gui.Forms
 
 		private void defaultProjectMenuItem_Click(object sender, EventArgs e)
 		{
-			createProject();
+			createNewProject();
 		}
 
 		private void emptyProjectMenuItem_Click(object sender, EventArgs e)
@@ -228,6 +269,7 @@ namespace jekyll_gui.Forms
 
 		private void rebuildMenuItem_Click(object sender, EventArgs e)
 		{
+			// Rebuild is clean + build
 			cleanMenuItem_Click(sender, e);
 			buildMenuItem_Click(sender, e);
 		}
@@ -255,6 +297,7 @@ namespace jekyll_gui.Forms
 
 		private void toporSeparator_Click(object sender, EventArgs e)
 		{
+			// Easter Egg
 			MessageBox.Show("This product was possible thanks to the power of Nexus. For more info and awesomeness, a website will appear.", "Nexus Power", MessageBoxButtons.OK);
 			Process.Start(@"http://topor.io");
 		}
@@ -269,6 +312,7 @@ namespace jekyll_gui.Forms
 		private void consoleMenuStrip_Opening(object sender, CancelEventArgs e)
 		{
 			copyConsoleMenuItem.Visible = (consoleTextBox.SelectionLength == 0) ? false : true;
+			// If the console is empty there is no need for menu strip
 			e.Cancel = (consoleTextBox.TextLength == 0) ? true : false;
 		}
 
@@ -310,6 +354,7 @@ namespace jekyll_gui.Forms
 
 		private void portNumericBox_ValueChanged(object sender, EventArgs e)
 		{
+			// Update port
 			JekyllEnv.PortNumber = (uint) portNumericBox.Value;
 		}
 
@@ -327,6 +372,7 @@ namespace jekyll_gui.Forms
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			// Save state
 			Properties.Settings.Default.MainFormSize = Size;
 			Properties.Settings.Default.LastOpenPath = projectPath;
 			Properties.Settings.Default.Save();

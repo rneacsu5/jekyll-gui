@@ -12,15 +12,31 @@ namespace jekyll_gui.Forms
 	public partial class TemplateDialog : Form
 	{
 
+		/// <summary>
+		/// Class that hold info about a template (source url, demo url etc.)
+		/// </summary>
 		public class JekyllTemplate
 		{
+			/// <summary>
+			/// Short name of the template
+			/// </summary>
 			public string Name;
+			/// <summary>
+			/// URL to the template's source
+			/// </summary>
 			public string SourceURL;
+			/// <summary>
+			/// URL to the template's demo or null if not available
+			/// </summary>
 			public string DemoURL;
+			/// <summary>
+			/// URL to source zip
+			/// </summary>
 			public string SourceZipURL
 			{
 				get
 				{
+					// Use GitHub API for the zip url. See https://developer.github.com/v3/repos/contents/#get-archive-link
 					if (SourceURL.Replace("github.com", "api.github.com/repos").Equals(SourceURL)) return "";
 					return SourceURL.Replace("github.com", "api.github.com/repos") + "/zipball";
 				}
@@ -45,6 +61,10 @@ namespace jekyll_gui.Forms
 
 		private string outputDir;
 
+		/// <summary>
+		/// Dialog for choosing a template and download it to the specified directory
+		/// </summary>
+		/// <param name="outputDir">Where to download the selected template</param>
 		public TemplateDialog(string outputDir)
 		{
 			InitializeComponent();
@@ -54,12 +74,14 @@ namespace jekyll_gui.Forms
 
 		private void refreshTemplatesList()
 		{
+			// Clear list and inform the user that the list is updated
 			templatesListBox.Items.Clear();
 			templatesListBox.Items.Add(new JekyllTemplate("Downloading list...", null, null));
 			templatesListBox.Enabled = false;
 
 			displayTemplate(-1);
 
+			// Get markdown list from Jekyll wiki
 			WebClient listDL = new WebClient();
 			listDL.DownloadStringCompleted += listDL_DownloadStringCompleted;
 			listDL.DownloadStringAsync(new Uri(@"https://raw.githubusercontent.com/wiki/jekyll/jekyll/Themes.md"));
@@ -74,6 +96,10 @@ namespace jekyll_gui.Forms
 			populateTemplates(e.Result);
 		}
 
+		/// <summary>
+		/// Parse the provided markdown and populates the templates list
+		/// </summary>
+		/// <param name="markdown">Markdown string</param>
 		private void populateTemplates(string markdown)
 		{
 			templatesListBox.Items.Clear();
@@ -81,7 +107,10 @@ namespace jekyll_gui.Forms
 
 			if (string.IsNullOrEmpty(markdown)) return;
 
+			// Remove unnecessary space and description with regex
 			markdown = Regex.Replace(markdown, @"- +[^\[\n]*(?=\(\[)", "");
+
+			// Match templates using regex
 			foreach (Match m in Regex.Matches(markdown, @"\* +(.*) +\(\[source\]\s*\(([^\)]+)\)(?:.*\[demo\]\s*\()?([^\)\s]*)\)?\)")) {
 				templatesListBox.Items.Add(new JekyllTemplate(m.Groups[1].Value, m.Groups[2].Value, m.Groups[3].Value));
 			}
@@ -90,8 +119,13 @@ namespace jekyll_gui.Forms
 			templatesListBox.SelectedIndex = 0;
 		}
 
+		/// <summary>
+		/// Displays the specified template in the right panel. If index is invalid the panell is hid
+		/// </summary>
+		/// <param name="index">Zero based index of the template to display from the templates list</param>
 		private void displayTemplate(int index)
 		{
+			// Check index and template
 			if (index < 0 ||
 				index >= templatesListBox.Items.Count ||
 				templatesListBox.Items[index] == null ||
@@ -101,6 +135,7 @@ namespace jekyll_gui.Forms
 				return;
 			}
 
+			// Update UI
 			selectedTemplate = (JekyllTemplate) templatesListBox.Items[index];
 			templateNameLb.Text = selectedTemplate.Name;
 
@@ -111,11 +146,14 @@ namespace jekyll_gui.Forms
 				submitBtn.Enabled = false;
 			}
 
+			// Update web browser
 			if (!string.IsNullOrEmpty(selectedTemplate.DemoURL)) {
+				// If a demo is available, show a redirect.
 				viewInBrowserBtn.Enabled = true;
 				demoBrowser.DocumentText = "<html><head><meta http-equiv=\"refresh\" content=\"0; url=" + selectedTemplate.DemoURL + "\" /></head><body><h4>Loading...</h4></body></html>";
 			}
 			else {
+				// If a demo is not available, inform the user
 				viewInBrowserBtn.Enabled = false;
 				demoBrowser.DocumentText = "<html><body><h4>This template does not provide a demo site.</h4></body></html>";
 			}
@@ -123,16 +161,23 @@ namespace jekyll_gui.Forms
 			templatePanel.Enabled = templatePanel.Visible = true;
 		}
 
+		/// <summary>
+		/// Downloads and unzips the selected template in the output directory
+		/// </summary>
+		/// <returns>True if successfull, false if not</returns>
 		private bool applyTemplate()
 		{
+			// Check template
 			if (selectedTemplate == null || string.IsNullOrEmpty(selectedTemplate.SourceURL)) return false;
 
+			// Temp dir for downloading and unziping the archive
 			string tempDir = outputDir + @"\.tmp";
 			string zip = tempDir + @"\source.zip";
 
 			if (!Tools.DirectoryDelete(tempDir)) return false;
 
 			try {
+				// Create the temp dir but make it hidden
 				Directory.CreateDirectory(tempDir).Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 			}
 			catch (Exception ex) {
@@ -144,7 +189,7 @@ namespace jekyll_gui.Forms
 			BackgroundWorker bw = new BackgroundWorker();
 			bw.DoWork += (object s1, DoWorkEventArgs e1) => {
 				WebClient sourceDL = new WebClient();
-				sourceDL.Headers[HttpRequestHeader.UserAgent] = "Jekyll GUI";
+				sourceDL.Headers[HttpRequestHeader.UserAgent] = "Jekyll GUI"; // Required by the GitHub API
 				sourceDL.DownloadProgressChanged += (object s2, DownloadProgressChangedEventArgs e2) => {
 					bw.ReportProgress(e2.ProgressPercentage);
 					if (bw.CancellationPending) {
@@ -155,9 +200,9 @@ namespace jekyll_gui.Forms
 				sourceDL.DownloadFileAsync(new Uri(selectedTemplate.SourceZipURL), zip);
 				while (sourceDL.IsBusy) Thread.Sleep(100);
 
-				if (!File.Exists(zip)) throw new WebException("File not found");
+				if (!File.Exists(zip)) throw new WebException("File not downloaded");
 				FileInfo info = new FileInfo(zip);
-				if (info.Length == 0) throw new WebException("Nothing downloaded");
+				if (info.Length == 0) throw new WebException("Nothing downloaded"); // Usualy occurs when internet is down.
 			};
 
 			ProgressForm form = new ProgressForm(bw, "Downloading source...", true);
@@ -190,9 +235,12 @@ namespace jekyll_gui.Forms
 
 		private void TemplateDialog_Load(object sender, EventArgs e)
 		{
+			// Set Icon
 			Icon = Properties.Resources.jekyll_icon;
 			displayTemplate(-1);
 			refreshTemplatesList();
+
+			// Restore state
 			Size = Properties.Settings.Default.TemplateDialogSize;
 		}
 
@@ -231,6 +279,7 @@ namespace jekyll_gui.Forms
 
 		private void TemplateDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			// Save state
 			Properties.Settings.Default.TemplateDialogSize = Size;
 			Properties.Settings.Default.Save();
 		}
